@@ -1,0 +1,25 @@
+Browser port status
+
+Fixes in this archive:
+- Corrected JSON boolean encoding throughout the Prolog API. `reply_json_dict/1` expects the dict representation atoms `true` and `false`, not legacy compound terms `@(true)` and `@(false)`.
+- Updated boolean input conversion to accept JSON booleans (`true`/`false`) as well as numeric flags (`1`/`0`).
+- Improved /api error handling: Prolog exceptions are logged in the server terminal and returned as JSON with HTTP 500; non-POST methods return HTTP 405.
+- Added README troubleshooting for the JSON boolean serialization failure.
+
+Checks completed in the build workspace:
+- JavaScript syntax check (node --check): passed.
+- HTML ID audit: 55 IDs, no duplicates.
+- Frontend/API audit: all 7 browser API operations have matching Prolog dispatch handlers.
+- Prolog source scan: no remaining legacy @(true)/@(false) boolean terms in application code.
+
+Not verified here:
+- SWI-Prolog runtime load and live HTTP integration test. SWI-Prolog is not installed in the build workspace; the included project requires SWI-Prolog 9.x.
+
+Motion and sound upgrade:
+- Added curved disk-flight animation after Prolog validates a move.
+- The same animation is used by undo, redo and auto-solve.
+- Added synthesized pickup, whoosh, landing, blocked-move and victory sounds.
+- Added a separate SFX ON/OFF control independent of background music.
+- Added animated legal-target highlighting, landing pulse and impact burst; reduced-motion preferences are respected.
+- Frontend checks: node --check passed; HTML ID audit passed with no duplicate IDs; CSS brace-balance and interaction-wiring checks passed.
+- Live SWI-Prolog browser test remains unverified in this build environment.

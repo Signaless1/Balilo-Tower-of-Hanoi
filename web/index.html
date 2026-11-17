@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#090817">
+  <meta name="description" content="Tower of Hanoi: Beyond Infinity — a cosmic puzzle game powered by SWI-Prolog.">
+  <title>Tower of Hanoi: Beyond Infinity</title>
+  <link rel="icon" href="/assets/icon.png" type="image/png">
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
+  <div class="shell">
+    <header class="topbar">
+      <a class="brand" href="#home" aria-label="Tower of Hanoi home">
+        <span class="brand-mark">H<span>∞</span></span>
+        <span class="brand-copy"><strong>TOWER OF HANOI</strong><small>BEYOND INFINITY</small></span>
+      </a>
+      <div class="topbar-right">
+        <button class="music-toggle" id="musicToggle" type="button" aria-pressed="false" aria-label="Turn background music on">♫ <span>MUSIC OFF</span></button>
+        <button class="music-toggle sound-toggle" id="soundToggle" type="button" aria-pressed="true" aria-label="Turn sound effects off">◖ <span>SFX ON</span></button>
+        <span class="engine-status"><i id="engineDot"></i><span id="engineStatus">Checking Prolog engine…</span></span>
+      </div>
+    </header>
+
+    <main id="app" aria-live="polite">
+      <section id="homeView" class="home-view view">
+        <div class="hero-copy">
+          <div class="eyebrow"><span class="eyebrow-line"></span> A CLASSIC REIMAGINED</div>
+          <h1>THINK BEYOND<br><em>THE INFINITE.</em></h1>
+          <p class="hero-subtitle">A timeless puzzle. A universe of possibilities.<br>Move every disk. Master every tower.</p>
+          <div class="hero-actions">
+            <button class="btn btn-primary btn-large" id="startButton"><span>▶</span> PLAY THE GAME</button>
+            <button class="btn btn-ghost" id="howButton">HOW TO PLAY <span>↗</span></button>
+          </div>
+        </div>
+
+        <div class="hero-art" aria-label="Tower of Hanoi game preview">
+          <div class="orbit orbit-a"></div><div class="orbit orbit-b"></div>
+          <div class="orbit-node node-a"></div><div class="orbit-node node-b"></div>
+          <div class="art-glow"></div>
+          <div class="preview-board">
+            <div class="preview-label"><span>LIVE PUZZLE</span><span class="preview-dots">● ● ●</span></div>
+            <div class="preview-towers">
+              <div class="preview-tower"><div class="preview-disks"><i class="d disk-4"></i><i class="d disk-3"></i><i class="d disk-2"></i><i class="d disk-1"></i></div><b></b><small>01</small></div>
+              <div class="preview-tower"><div class="preview-disks"></div><b></b><small>02</small></div>
+              <div class="preview-tower"><div class="preview-disks"></div><b></b><small>03</small></div>
+            </div>
+            <div class="preview-bottom"><span>MINIMUM MOVES</span><strong>15</strong><span class="preview-tag">OPTIMAL PATH</span></div>
+          </div>
+          <div class="floating-chip chip-left"><span>✦</span><div><b>PROLOG CORE</b><small>RULES & SOLVER</small></div></div>
+          <div class="floating-chip chip-right"><span>∞</span><div><b>ENDLESS CHALLENGE</b><small>3–6 TOWERS</small></div></div>
+        </div>
+
+        <div class="feature-strip">
+          <article><span class="feature-icon cyan">⌘</span><div><b>PURE STRATEGY</b><small>Every move matters. Every disk has a place.</small></div></article>
+          <article><span class="feature-icon purple">◇</span><div><b>SMART SOLVER</b><small>Optimal hints calculated by Prolog.</small></div></article>
+          <article><span class="feature-icon pink">✧</span><div><b>YOUR PACE</b><small>Classic, Zen, and multi-tower puzzles.</small></div></article>
+        </div>
+      </section>
+
+      <section id="setupView" class="setup-view view hidden">
+        <div class="section-heading">
+          <button class="back-link" id="backHome">← BACK</button>
+          <div class="eyebrow"><span class="eyebrow-line"></span> YOUR NEXT CHALLENGE</div>
+          <h2>CHOOSE YOUR <em>UNIVERSE.</em></h2>
+          <p>Configure your puzzle, then step into the board.</p>
+        </div>
+
+        <div class="setup-grid">
+          <div class="mode-panel panel">
+            <div class="panel-heading"><span class="step-number">01</span><div><h3>GAME MODE</h3><p>Pick the way you want to play.</p></div></div>
+            <div class="mode-options" id="modeOptions">
+              <button class="mode-option selected" data-mode="classic"><span class="mode-symbol">⌘</span><span><b>CLASSIC</b><small>The original puzzle. No distractions.</small></span><i>✓</i></button>
+              <button class="mode-option" data-mode="zen"><span class="mode-symbol purple">☯</span><span><b>ZEN</b><small>Relax, experiment, and take your time.</small></span><i>✓</i></button>
+              <button class="mode-option" data-mode="infinity"><span class="mode-symbol pink">∞</span><span><b>INFINITY TOWERS</b><small>More towers. More routes. More strategy.</small></span><i>✓</i></button>
+              <button class="mode-option" data-mode="timeattack"><span class="mode-symbol gold">◷</span><span><b>TIME ATTACK</b><small>Race the clock and beat the minimum.</small></span><i>✓</i></button>
+            </div>
+          </div>
+          <div class="config-panel panel">
+            <div class="panel-heading"><span class="step-number">02</span><div><h3>PUZZLE SETUP</h3><p>Set the rules of your challenge.</p></div></div>
+            <label class="field-label" for="diskCount">NUMBER OF DISKS <output id="diskOutput">4 DISKS</output></label>
+            <div class="range-wrap"><input id="diskCount" type="range" min="2" max="10" value="4"><div class="range-ticks"><span>2</span><span>6</span><span>10</span></div></div>
+            <div id="towerConfig" class="config-row hidden">
+              <label class="field"><span>NUMBER OF TOWERS</span><select id="towerCount"><option value="4">4 towers</option><option value="5">5 towers</option><option value="6">6 towers</option></select></label>
+              <label class="field"><span>ROUTE NETWORK</span><select id="topology"><option value="open">Open</option><option value="line">Line</option><option value="ring">Ring</option><option value="star">Star</option></select></label>
+            </div>
+            <div id="sourceConfig" class="config-row">
+              <label class="field"><span>START TOWER</span><select id="sourceTower"><option value="0">Tower 01</option><option value="1">Tower 02</option><option value="2">Tower 03</option></select></label>
+              <label class="field"><span>GOAL TOWER</span><select id="goalTower"><option value="2">Tower 03</option><option value="1">Tower 02</option><option value="0">Tower 01</option></select></label>
+            </div>
+            <div class="config-note"><span>✦</span><p id="setupNote">The classic 3-tower puzzle has a proven minimum of <b>2ⁿ − 1</b> moves.</p></div>
+            <button class="btn btn-primary btn-block" id="launchButton">ENTER THE PUZZLE <span>→</span></button>
+          </div>
+        </div>
+      </section>
+
+      <section id="gameView" class="game-view view hidden">
+        <div class="game-heading">
+          <button class="back-link" id="backSetup">← MENU</button>
+          <div class="game-title"><div class="eyebrow"><span class="eyebrow-line"></span><span id="gameModeLabel">CLASSIC MODE</span></div><h2>THE <em>PUZZLE</em></h2></div>
+          <div class="game-stats"><div><small>MOVES</small><strong id="moveCount">0</strong></div><div><small>TIME</small><strong id="timerValue">00:00</strong></div><div><small>MINIMUM</small><strong id="optimalValue">—</strong></div></div>
+        </div>
+
+        <div class="game-layout">
+          <section class="board-panel panel">
+            <div class="board-topline"><div><span class="live-dot"></span><span id="boardStatus">PUZZLE IN PROGRESS</span></div><span id="boardDiskLabel">4 DISKS · 3 TOWERS</span></div>
+            <div id="board" class="board" aria-label="Tower of Hanoi board"></div>
+            <div class="board-legend"><span><i class="legend-dot cyan"></i> SELECTED</span><span><i class="legend-dot purple"></i> LEGAL DESTINATION</span><span><i class="legend-dot gold"></i> HINT</span></div>
+            <div class="board-help" id="boardHelp">Drag a top disk to another tower, or tap two towers to move.</div>
+          </section>
+
+          <aside class="control-panel">
+            <section class="panel control-card">
+              <div class="panel-heading compact"><span class="step-number">✦</span><div><h3>GAME CONTROLS</h3><p>Make every move count.</p></div></div>
+              <div class="control-grid">
+                <button class="control-button" id="undoButton" disabled><span>↶</span><b>UNDO</b><small>Z</small></button>
+                <button class="control-button" id="redoButton" disabled><span>↷</span><b>REDO</b><small>Y</small></button>
+                <button class="control-button" id="hintButton"><span>✧</span><b>HINT</b><small>H</small></button>
+                <button class="control-button" id="solveButton"><span>▷</span><b>AUTO SOLVE</b><small>A</small></button>
+                <button class="control-button" id="restartButton"><span>⟲</span><b>RESTART</b><small>R</small></button>
+                <button class="control-button" id="historyButton"><span>☷</span><b>HISTORY</b><small>M</small></button>
+              </div>
+              <div class="move-feedback" id="moveFeedback">Choose a tower to begin.</div>
+            </section>
+            <section class="panel objective-card">
+              <div class="panel-heading compact"><span class="step-number">◎</span><div><h3>YOUR OBJECTIVE</h3><p>One disk at a time.</p></div></div>
+              <div class="objective-progress"><div class="progress-copy"><span>DISKS IN GOAL</span><b id="goalProgressText">0 / 4</b></div><div class="progress-track"><i id="goalProgressBar"></i></div></div>
+              <div class="goal-callout"><span>⌖</span><p>Move all disks to <b id="goalTowerName">Tower 03</b>, keeping smaller disks above larger ones.</p></div>
+            </section>
+          </aside>
+        </div>
+        <section id="historyPanel" class="panel history-panel hidden"><div class="history-heading"><h3>MOVE HISTORY</h3><span id="historyCount">0 MOVES</span></div><ol id="historyList"></ol></section>
+      </section>
+
+      <section id="howView" class="how-view view hidden">
+        <div class="section-heading"><button class="back-link" id="backHow">← BACK</button><div class="eyebrow"><span class="eyebrow-line"></span> THE BASICS</div><h2>HOW TO <em>PLAY.</em></h2></div>
+        <div class="how-grid">
+          <article class="panel how-card"><span class="how-number">01</span><h3>PICK UP A DISK</h3><p>Drag the top disk from a tower. You can only move the top disk.</p></article>
+          <article class="panel how-card"><span class="how-number">02</span><h3>DROP IT IN PLACE</h3><p>Release the disk over another tower. On touch screens, tap a source tower and then a destination.</p></article>
+          <article class="panel how-card"><span class="how-number">03</span><h3>REACH THE GOAL</h3><p>Move the complete stack to the goal tower. Use hints to reveal an optimal next move.</p></article>
+        </div>
+        <div class="panel rules-panel"><h3>THE GOLDEN RULES</h3><p>One disk per move. Only the top disk may move. A larger disk may never rest on a smaller disk. In Infinity Towers, the route network can also restrict which towers connect.</p><button class="btn btn-primary" id="howPlayButton">LET'S PLAY <span>→</span></button></div>
+      </section>
+
+      <div id="toast" class="toast" role="status"></div>
+      <div id="winOverlay" class="win-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="winTitle">
+        <div class="win-card panel"><div class="win-spark">✦</div><div class="eyebrow">PUZZLE COMPLETE</div><h2 id="winTitle">YOU DID <em>IT.</em></h2><p id="winMessage">Every disk found its place.</p><div class="win-stats"><div><small>YOUR MOVES</small><b id="winMoves">0</b></div><div><small>MINIMUM</small><b id="winOptimal">0</b></div><div><small>YOUR TIME</small><b id="winTime">00:00</b></div></div><div class="win-score"><span>PROLOG SCORE</span><strong id="winScore">0</strong></div><div class="win-actions"><button class="btn btn-primary" id="playAgainButton">PLAY AGAIN</button><button class="btn btn-ghost" id="winMenuButton">MAIN MENU</button></div></div>
+      </div>
+    </main>
+    <footer class="footer"><span>© 2026 TOWER OF HANOI: BEYOND INFINITY</span><span>BUILT WITH <b>HTML</b> · <b>CSS</b> · <b>SWI-PROLOG</b></span></footer>
+  </div>
+</body>
+</html>
